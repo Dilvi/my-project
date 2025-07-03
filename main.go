@@ -13,12 +13,12 @@ func main() {
 func userInput() float64 {
 	var EURValue float64
 	fmt.Println("Введите количество Евро, которые вы хотите перевести в рубли")
-	fmt.Scan(EURValue)
+	fmt.Scan(&EURValue) 
 	return EURValue
 }
 
-// Пустая функция без реализации
-func currencyConverter(a,b,c float64) float64 { // Принимает 3 значения: 1 число и 2 валюты - исходная и целевая
-	var d float64 // Выходное число
-	return d
+
+func currencyConverter(amount float64, from string, to string) float64 {
+	var result float64
+	return result
 }
