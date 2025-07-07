@@ -68,22 +68,28 @@ func currencyConverter(currencyInput int, currencyValue float64, currencyOutput 
 	const USD_TO_RUB = 78.47
 
 	switch currencyInput {
-	case 1:
+	case 1: // EUR
 		if currencyOutput == 1 {
+			// EUR -> USD
 			result = currencyValue * (1 / USD_TO_EUR)
 		} else if currencyOutput == 2 {
+			// EUR -> RUB
 			result = currencyValue * (USD_TO_RUB / USD_TO_EUR)
 		}
-	case 2: 
+	case 2: // USD
 		if currencyOutput == 1 {
+			// USD -> EUR
 			result = currencyValue * USD_TO_EUR
 		} else if currencyOutput == 2 {
+			// USD -> RUB
 			result = currencyValue * USD_TO_RUB
 		}
-	case 3:
+	case 3: // RUB
 		if currencyOutput == 1 {
+			// RUB -> EUR
 			result = currencyValue * (USD_TO_EUR / USD_TO_RUB)
 		} else if currencyOutput == 2 {
+			// RUB -> USD
 			result = currencyValue * (1 / USD_TO_RUB)
 		}
 	}
