@@ -53,10 +53,32 @@ func inputCurrency() (int, int) {
 			fmt.Println("2 - USD")
 		}
 		fmt.Scan(&currencyOutput)
-		if currencyOutput != 1 && currencyOutput != 2{
+		if currencyOutput != 1 && currencyOutput != 2 {
 			fmt.Println("Ошибка при вводе, повторите ввод")
 		} else {
 			break
+		}
+	}
+
+	// Преобразуем выбор пользователя в реальные валюты
+	switch currencyInput {
+	case 1: // EUR
+		if currencyOutput == 1 {
+			currencyOutput = 2 // USD
+		} else {
+			currencyOutput = 3 // RUB
+		}
+	case 2: // USD
+		if currencyOutput == 1 {
+			currencyOutput = 1 // EUR
+		} else {
+			currencyOutput = 3 // RUB
+		}
+	case 3: // RUB
+		if currencyOutput == 1 {
+			currencyOutput = 1 // EUR
+		} else {
+			currencyOutput = 2 // USD
 		}
 	}
 	return currencyInput, currencyOutput
@@ -67,25 +89,25 @@ func currencyConverter(currencyInput int, currencyValue float64, currencyOutput 
 	const USD_TO_EUR = 0.85
 	const USD_TO_RUB = 78.47
 
-	switch currencyInput {
-	case 1:
-		if currencyOutput == 1 {
-			result = currencyValue * (1 / USD_TO_EUR)
-		} else if currencyOutput == 2 {
-			result = currencyValue * (USD_TO_RUB / USD_TO_EUR)
-		}
-	case 2: 
-		if currencyOutput == 1 {
-			result = currencyValue * USD_TO_EUR
-		} else if currencyOutput == 2 {
-			result = currencyValue * USD_TO_RUB
-		}
-	case 3:
-		if currencyOutput == 1 {
-			result = currencyValue * (USD_TO_EUR / USD_TO_RUB)
-		} else if currencyOutput == 2 {
-			result = currencyValue * (1 / USD_TO_RUB)
-		}
+	switch {
+	case currencyInput == 1 && currencyOutput == 2:
+		// EUR -> USD
+		result = currencyValue * (1 / USD_TO_EUR)
+	case currencyInput == 1 && currencyOutput == 3:
+		// EUR -> RUB = EUR -> USD -> RUB
+		result = currencyValue * (1 / USD_TO_EUR) * USD_TO_RUB
+	case currencyInput == 2 && currencyOutput == 1:
+		// USD -> EUR
+		result = currencyValue * USD_TO_EUR
+	case currencyInput == 2 && currencyOutput == 3:
+		// USD -> RUB
+		result = currencyValue * USD_TO_RUB
+	case currencyInput == 3 && currencyOutput == 1:
+		// RUB -> EUR = RUB -> USD -> EUR
+		result = currencyValue * (1 / USD_TO_RUB) * USD_TO_EUR
+	case currencyInput == 3 && currencyOutput == 2:
+		// RUB -> USD
+		result = currencyValue * (1 / USD_TO_RUB)
 	}
 	return result
 }
