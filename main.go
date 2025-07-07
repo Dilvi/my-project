@@ -47,7 +47,7 @@ func inputAmount() float64 {
 	return amount
 }
 
-// Шаг 3: Ввод целевой валюты
+// Шаг 3: Ввод целевой валюты, с преобразованием в реальный код
 func inputCurrencyTo(from int) int {
 	var choice int
 	for {
@@ -71,7 +71,7 @@ func inputCurrencyTo(from int) int {
 		fmt.Println("Ошибка: выберите 1 или 2.")
 	}
 
-	// Преобразование выбора в код валюты
+	// Преобразуем выбор в реальный код валюты:
 	switch from {
 	case 1: // EUR
 		if choice == 1 {
@@ -89,17 +89,17 @@ func inputCurrencyTo(from int) int {
 		}
 		return 2 // USD
 	}
-	return 0 // недостижим
+	return 0 // не должен достигаться
 }
 
-// Функция конвертации валюты
+// Конвертация валют: через USD
 func currencyConverter(from int, to int, amount float64) float64 {
 	const USD_TO_EUR = 0.85
 	const USD_TO_RUB = 78.47
 
 	var usd float64
 
-	// Переводим сначала в USD
+	// Шаг 1: Перевод в USD
 	switch from {
 	case 1: // EUR -> USD
 		usd = amount * (1 / USD_TO_EUR)
@@ -109,15 +109,16 @@ func currencyConverter(from int, to int, amount float64) float64 {
 		usd = amount * (1 / USD_TO_RUB)
 	}
 
-	// Переводим из USD в нужную валюту
+	// Шаг 2: Перевод из USD в целевую валюту
 	var result float64
 	switch to {
 	case 1: // USD -> EUR
 		result = usd * USD_TO_EUR
-	case 2: // USD
+	case 2: // USD -> USD
 		result = usd
 	case 3: // USD -> RUB
 		result = usd * USD_TO_RUB
 	}
+
 	return result
 }
