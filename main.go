@@ -3,48 +3,53 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Конвертер валюты")
+	fmt.Println("=== Конвертер валют ===")
 
 	from := inputCurrencyFrom()
 	amount := inputAmount()
 	to := inputCurrencyTo(from)
 
-	result := currencyConverter(from, amount, to)
+	result := currencyConverter(from, to, amount)
+
 	fmt.Printf("Результат: %.2f\n", result)
 }
 
+// Шаг 1: Ввод исходной валюты
 func inputCurrencyFrom() int {
-	var currency int
+	var from int
 	for {
 		fmt.Println("Выберите исходную валюту:")
 		fmt.Println("1 - EUR")
 		fmt.Println("2 - USD")
 		fmt.Println("3 - RUB")
-		fmt.Scan(&currency)
-		if currency >= 1 && currency <= 3 {
+		fmt.Print("Ввод: ")
+		fmt.Scan(&from)
+		if from >= 1 && from <= 3 {
 			break
 		}
-		fmt.Println("Ошибка при вводе, повторите.")
+		fmt.Println("Ошибка: введите число от 1 до 3.")
 	}
-	return currency
+	return from
 }
 
+// Шаг 2: Ввод суммы
 func inputAmount() float64 {
 	var amount float64
 	for {
 		fmt.Println("Введите сумму для конвертации:")
+		fmt.Print("Ввод: ")
 		fmt.Scan(&amount)
 		if amount > 0 {
 			break
 		}
-		fmt.Println("Сумма должна быть больше 0.")
+		fmt.Println("Ошибка: сумма должна быть положительной.")
 	}
 	return amount
 }
 
+// Шаг 3: Ввод целевой валюты
 func inputCurrencyTo(from int) int {
 	var choice int
-	var to int
 	for {
 		fmt.Println("Выберите целевую валюту:")
 		switch from {
@@ -58,42 +63,43 @@ func inputCurrencyTo(from int) int {
 			fmt.Println("1 - EUR")
 			fmt.Println("2 - USD")
 		}
+		fmt.Print("Ввод: ")
 		fmt.Scan(&choice)
 		if choice == 1 || choice == 2 {
 			break
 		}
-		fmt.Println("Ошибка при вводе, повторите.")
+		fmt.Println("Ошибка: выберите 1 или 2.")
 	}
+
+	// Преобразование выбора в код валюты
 	switch from {
-	case 1:
+	case 1: // EUR
 		if choice == 1 {
-			to = 2 // EUR -> USD
-		} else {
-			to = 3 // EUR -> RUB
+			return 2 // USD
 		}
-	case 2:
+		return 3 // RUB
+	case 2: // USD
 		if choice == 1 {
-			to = 1 // USD -> EUR
-		} else {
-			to = 3 // USD -> RUB
+			return 1 // EUR
 		}
-	case 3:
+		return 3 // RUB
+	case 3: // RUB
 		if choice == 1 {
-			to = 1 // RUB -> EUR
-		} else {
-			to = 2 // RUB -> USD
+			return 1 // EUR
 		}
+		return 2 // USD
 	}
-	return to
+	return 0 // недостижим
 }
 
-func currencyConverter(from int, amount float64, to int) float64 {
+// Функция конвертации валюты
+func currencyConverter(from int, to int, amount float64) float64 {
 	const USD_TO_EUR = 0.85
 	const USD_TO_RUB = 78.47
 
 	var usd float64
 
-	// Сначала переводим всё в USD
+	// Переводим сначала в USD
 	switch from {
 	case 1: // EUR -> USD
 		usd = amount * (1 / USD_TO_EUR)
@@ -103,16 +109,15 @@ func currencyConverter(from int, amount float64, to int) float64 {
 		usd = amount * (1 / USD_TO_RUB)
 	}
 
+	// Переводим из USD в нужную валюту
 	var result float64
-	// Потом из USD в нужную валюту
 	switch to {
-	case 1: // EUR
+	case 1: // USD -> EUR
 		result = usd * USD_TO_EUR
 	case 2: // USD
 		result = usd
-	case 3: // RUB
+	case 3: // USD -> RUB
 		result = usd * USD_TO_RUB
 	}
-
 	return result
 }
