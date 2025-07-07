@@ -14,7 +14,7 @@ func main() {
 	fmt.Printf("Результат: %.2f\n", result)
 }
 
-// Шаг 1: Ввод исходной валюты
+// Шаг 1: выбор исходной валюты
 func inputCurrencyFrom() int {
 	var from int
 	for {
@@ -27,27 +27,27 @@ func inputCurrencyFrom() int {
 		if from >= 1 && from <= 3 {
 			break
 		}
-		fmt.Println("Ошибка: введите число от 1 до 3.")
+		fmt.Println("Ошибка: введите 1, 2 или 3.")
 	}
 	return from
 }
 
-// Шаг 2: Ввод суммы
+// Шаг 2: ввод суммы
 func inputAmount() float64 {
 	var amount float64
 	for {
-		fmt.Println("Введите сумму для конвертации:")
+		fmt.Println("Введите сумму:")
 		fmt.Print("Ввод: ")
 		fmt.Scan(&amount)
 		if amount > 0 {
 			break
 		}
-		fmt.Println("Ошибка: сумма должна быть положительной.")
+		fmt.Println("Сумма должна быть положительной.")
 	}
 	return amount
 }
 
-// Шаг 3: Ввод целевой валюты, с преобразованием в реальный код
+// Шаг 3: выбор целевой валюты с преобразованием в коды 1=EUR, 2=USD, 3=RUB
 func inputCurrencyTo(from int) int {
 	var choice int
 	for {
@@ -71,7 +71,7 @@ func inputCurrencyTo(from int) int {
 		fmt.Println("Ошибка: выберите 1 или 2.")
 	}
 
-	// Преобразуем выбор в реальный код валюты:
+	// Преобразуем выбор в абсолютный код валюты
 	switch from {
 	case 1: // EUR
 		if choice == 1 {
@@ -89,34 +89,33 @@ func inputCurrencyTo(from int) int {
 		}
 		return 2 // USD
 	}
-	return 0 // не должен достигаться
+	return 0
 }
 
-// Конвертация валют: через USD
+// Функция конвертации валют
 func currencyConverter(from int, to int, amount float64) float64 {
 	const USD_TO_EUR = 0.85
 	const USD_TO_RUB = 78.47
 
+	// Конвертируем from → USD
 	var usd float64
-
-	// Шаг 1: Перевод в USD
 	switch from {
-	case 1: // EUR -> USD
-		usd = amount * (1 / USD_TO_EUR)
+	case 1: // EUR
+		usd = amount / USD_TO_EUR
 	case 2: // USD
 		usd = amount
-	case 3: // RUB -> USD
-		usd = amount * (1 / USD_TO_RUB)
+	case 3: // RUB
+		usd = amount / USD_TO_RUB
 	}
 
-	// Шаг 2: Перевод из USD в целевую валюту
+	// Конвертируем USD → to
 	var result float64
 	switch to {
-	case 1: // USD -> EUR
+	case 1: // EUR
 		result = usd * USD_TO_EUR
-	case 2: // USD -> USD
+	case 2: // USD
 		result = usd
-	case 3: // USD -> RUB
+	case 3: // RUB
 		result = usd * USD_TO_RUB
 	}
 
