@@ -60,7 +60,7 @@ func formatInput(notFormattedValues string) []float64 {
 	return formattedValues
 }
 
-func calculate(formattedvalues[] float64, operation string) float64 {
+func calculate(formattedvalues []float64, operation string) float64 {
 	var result float64
 	switch {
 	case operation == "AVG":
