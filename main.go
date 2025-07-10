@@ -1,90 +1,85 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+	"strconv"
+	"strings"
+)
 
 func main() {
-	fmt.Println("Конвертер валюты")
-	currencyInput, currencyOutput := inputCurrency()
-	currencyValue := inputAmount()
-	result := currencyConverter(currencyInput, currencyValue, currencyOutput)
-	fmt.Printf("Результат: %.2f", result)
+	fmt.Println("Калькулятор операций")
+	operation := operationInput()
+	notFormattedValues := valuesInput()
+	formattedValues := formatInput(notFormattedValues)
+	for len(formattedValues) == 0 {
+		fmt.Println("Не удалось прочитать ни одного числа. Повторите ввод.")
+		notFormattedValues = valuesInput()
+		formattedValues = formatInput(notFormattedValues)
+	}
+	result := calculate(formattedValues, operation)
+	fmt.Println("Результат: ", result)
 }
 
-func inputAmount() float64 {
-	var currencyValue float64
+func operationInput() string {
+	var operation string
 	for {
-		fmt.Println("Введите конвертируемую сумму")
-		fmt.Scan(&currencyValue)
-		if currencyValue <= 0 {
-			fmt.Println("Ошибка при вводе, повторите ввод")
-		} else {
+		fmt.Println("Введите желаемую операцию:(AVG - среднее, SUM - сумма, MED - медиана)")
+		fmt.Scanln(&operation)
+		if operation == "AVG" || operation == "SUM" || operation == "MED" {
 			break
+		} else {
+			fmt.Println("Операция не распознана, повторите ввод")
 		}
 	}
-	return currencyValue
+	return operation
 }
 
-func inputCurrency() (int, int) {
-	var currencyInput int
-	var currencyOutput int
-	for {
-		fmt.Println("Введите конвертируемую валюту")
-		fmt.Println("1 - EUR")
-		fmt.Println("2 - USD")
-		fmt.Println("3 - RUB")
-		fmt.Scan(&currencyInput)
-		if currencyInput != 1 && currencyInput != 2 && currencyInput != 3 {
-			fmt.Println("Ошибка при вводе, повторите ввод")
-		} else {
-			break
-		}
-	}
-	for {
-		fmt.Println("В какую валюту вы хотите конвертировать?")
-		switch {
-		case currencyInput == 1:
-			fmt.Println("1 - USD")
-			fmt.Println("2 - RUB")
-		case currencyInput == 2:
-			fmt.Println("1 - EUR")
-			fmt.Println("2 - RUB")
-		case currencyInput == 3:
-			fmt.Println("1 - EUR")
-			fmt.Println("2 - USD")
-		}
-		fmt.Scan(&currencyOutput)
-		if currencyOutput != 1 && currencyOutput != 2{
-			fmt.Println("Ошибка при вводе, повторите ввод")
-		} else {
-			break
-		}
-	}
-	return currencyInput, currencyOutput
+func valuesInput() string {
+	var notFormattedValues string
+	fmt.Println("Введите числа для проведения операции через запятую: (Например 1, 2, 3...)")
+	fmt.Scanln(&notFormattedValues)
+	return notFormattedValues
 }
 
-func currencyConverter(currencyInput int, currencyValue float64, currencyOutput int) float64 {
+func formatInput(notFormattedValues string) []float64 {
+	formattedValues := []float64{}
+	stringValues := strings.Split(notFormattedValues, ",")
+	for index := range stringValues {
+		cleanStringValue := strings.TrimSpace(stringValues[index])
+		if cleanStringValue == "" {
+			continue
+		}
+		intValue, err := strconv.ParseFloat(cleanStringValue, 64)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		formattedValues = append(formattedValues, intValue)
+	}
+	return formattedValues
+}
+
+func calculate(formattedvalues []float64, operation string) float64 {
 	var result float64
-	const USD_TO_EUR = 0.85
-	const USD_TO_RUB = 78.47
-
-	switch currencyInput {
-	case 1:
-		if currencyOutput == 1 {
-			result = currencyValue * (1 / USD_TO_EUR)
-		} else if currencyOutput == 2 {
-			result = currencyValue * (USD_TO_RUB / USD_TO_EUR)
+	switch {
+	case operation == "AVG":
+		var sum float64
+		for index := range formattedvalues {
+			sum += formattedvalues[index]
 		}
-	case 2: 
-		if currencyOutput == 1 {
-			result = currencyValue * USD_TO_EUR
-		} else if currencyOutput == 2 {
-			result = currencyValue * USD_TO_RUB
+		result = sum / float64(len(formattedvalues))
+	case operation == "SUM":
+		for index := range formattedvalues {
+			result += formattedvalues[index]
 		}
-	case 3:
-		if currencyOutput == 1 {
-			result = currencyValue * (USD_TO_EUR / USD_TO_RUB)
-		} else if currencyOutput == 2 {
-			result = currencyValue * (1 / USD_TO_RUB)
+	case operation == "MED":
+		sort.Float64s(formattedvalues)
+		n := len(formattedvalues)
+		if n % 2 == 0 {
+			result = (formattedvalues[n/2-1] + formattedvalues[n/2])/2
+		} else {
+			result = formattedvalues[n/2]
 		}
 	}
 	return result
